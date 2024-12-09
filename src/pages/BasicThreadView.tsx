@@ -1,5 +1,5 @@
 import BasicCommentList from "../components/CommentList";
-import { Button } from "@mui/material";
+import { Button, TextField } from "@mui/material";
 import { Link } from "react-router-dom";
 import Typewriter from "typewriter-effect";
 
@@ -7,6 +7,16 @@ import React, { useState } from "react";
 
 const BasicThreadView: React.FC = () => {
     const [isShowButton, setIsShowButton] = useState(false);
+    const [isAddComment, setIsAddComment] = useState(false);
+    const [commentText, setCommentText] = useState("");
+
+    const hideCommentBox = () => {
+        setIsAddComment(false);
+    };
+
+    const showCommentBox = () => {
+        setIsAddComment(true);
+    };
 
     const hideButton = () => {
         setIsShowButton(false);
@@ -14,6 +24,10 @@ const BasicThreadView: React.FC = () => {
 
     const showButton = () => {
         setIsShowButton(true);
+    };
+
+    const handleCommentChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setCommentText(event.target.value);
     };
 
     return (
@@ -40,6 +54,27 @@ const BasicThreadView: React.FC = () => {
                 <Button variant="contained" color="primary" component={Link} to="/thread/1/styled">
                     {"Yes"}
                 </Button>
+            )}
+            <br />
+            <Button variant="outlined" color="primary" onClick={showCommentBox}>
+                {"Reply"}
+            </Button>
+            {isAddComment && (
+                <div>
+                    <TextField
+                        id="outlined-multiline-static"
+                        label="Comment"
+                        multiline
+                        rows={4}
+                        placeholder="Type your comment here"
+                        value={commentText}
+                        onChange={handleCommentChange}
+                    />
+                    <br />
+                    <Button variant="contained" color="primary" onClick={hideCommentBox}>
+                        {"Submit"}
+                    </Button>
+                </div>
             )}
         </div>
     );
