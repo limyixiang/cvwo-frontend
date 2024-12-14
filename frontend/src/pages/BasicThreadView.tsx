@@ -1,11 +1,16 @@
 import BasicCommentList from "../components/CommentList";
+import User from "../types/User";
 import { Button, TextField } from "@mui/material";
 import { Link } from "react-router-dom";
 import Typewriter from "typewriter-effect";
 
 import React, { useState } from "react";
 
-const BasicThreadView: React.FC = () => {
+type BasicThreadViewProps = {
+    user: User | null;
+};
+
+const BasicThreadView: React.FC<BasicThreadViewProps> = ({ user }) => {
     const [isShowButton, setIsShowButton] = useState(false);
     const [isAddComment, setIsAddComment] = useState(false);
     const [commentText, setCommentText] = useState("");
@@ -66,7 +71,7 @@ const BasicThreadView: React.FC = () => {
                         label="Comment"
                         multiline
                         rows={4}
-                        placeholder="Type your comment here"
+                        placeholder={`Reply as ${user?.name}`}
                         value={commentText}
                         onChange={handleCommentChange}
                     />

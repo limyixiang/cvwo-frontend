@@ -1,11 +1,16 @@
 import BasicCommentList from "../components/CommentList";
+import User from "../types/User";
 import { Button, Card, CardContent, Fade, Typography } from "@mui/material";
 import { Link } from "react-router-dom";
 import Typewriter from "typewriter-effect";
 
 import React, { useState } from "react";
 
-const StyledThreadView: React.FC = () => {
+type StyledThreadViewProps = {
+    user: User | null;
+};
+
+const StyledThreadView: React.FC<StyledThreadViewProps> = ({ user }) => {
     const [isShowTips, setIsShowTips] = useState(false);
 
     const showTips = () => {
@@ -14,6 +19,7 @@ const StyledThreadView: React.FC = () => {
 
     return (
         <div style={{ width: "30vw", margin: "auto" }}>
+            {`Hello, ${user?.name}!`}
             <Typography style={{ padding: "1em 0" }}>
                 <Typewriter
                     onInit={(typewriter) => {

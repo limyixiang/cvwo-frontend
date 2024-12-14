@@ -1,10 +1,10 @@
-type Comment = {
+type Thread = {
     id: number;
-    post_id: number;
+    category_id: number;
+    title: string;
     user_id: number;
-    content: string;
     created_at: Date;
     updated_at: Date;
 };
 
-export default Comment;
+export default Thread;
