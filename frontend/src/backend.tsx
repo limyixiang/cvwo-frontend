@@ -29,6 +29,15 @@ export const createUser = async (username: string) => {
 };
 
 // CATEGORY-RELATED
+export const fetchCategories = async () => {
+    try {
+        const response = await axios.get(`${URL}/api/categories`);
+        return response.data.payload.data;
+    } catch (error) {
+        console.error(error);
+        throw error;
+    }
+};
 
 // THREAD-RELATED
 
