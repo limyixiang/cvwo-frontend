@@ -86,4 +86,17 @@ export const fetchPosts = async () => {
     }
 };
 
+export const fetchPostsByCategory = async (category_id: number) => {
+    if (category_id === -1) {
+        return fetchPosts();
+    }
+    try {
+        const response = await axios.get(`${URL}/api/posts/category/${category_id}`);
+        return response.data.payload.data;
+    } catch (error) {
+        console.error(error);
+        throw error;
+    }
+};
+
 // COMMENT-RELATED

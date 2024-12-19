@@ -1,4 +1,4 @@
-import CategoryList from "../components/CategoryList";
+import CategoryList, { ALL_CATEGORIES } from "../components/CategoryList";
 import CreatePostModal from "../components/CreatePostModal";
 import BasicThreadList from "../components/BasicThreadList";
 import Category from "../types/Category";
@@ -12,10 +12,10 @@ type HomeProps = {
 };
 
 const Home: React.FC<HomeProps> = ({ user, setUser }) => {
-    const [selectedCategory, setSelectedCategory] = useState<Category | null>(null);
+    const [selectedCategory, setSelectedCategory] = useState<Category>(ALL_CATEGORIES);
     const [refresh, setRefresh] = useState(false);
 
-    const handleCategoryChange = (category: Category | null) => {
+    const handleCategoryChange = (category: Category) => {
         setSelectedCategory(category);
     };
 
@@ -41,7 +41,7 @@ const Home: React.FC<HomeProps> = ({ user, setUser }) => {
             <CategoryList onCategoryChange={handleCategoryChange} />
             {selectedCategory && <h4>{`Selected category: ${selectedCategory.name}`}</h4>}
             <CreatePostModal user={user} onPostCreated={handlePostCreated} />
-            <BasicThreadList refresh={refresh} />
+            <BasicThreadList refresh={refresh} selectedCategory={selectedCategory} />
         </>
     );
 };

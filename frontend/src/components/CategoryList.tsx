@@ -5,8 +5,10 @@ import React, { useEffect, useState } from "react";
 // eslint-disable-next-line import/named
 import { Select, MenuItem, FormControl, InputLabel, SelectChangeEvent } from "@mui/material";
 
+export const ALL_CATEGORIES: Category = { id: -1, name: "All" };
+
 type CategoryListProps = {
-    onCategoryChange: (category: Category | null) => void;
+    onCategoryChange: (category: Category) => void;
 };
 
 const CategoryList: React.FC<CategoryListProps> = ({ onCategoryChange }) => {
@@ -17,7 +19,7 @@ const CategoryList: React.FC<CategoryListProps> = ({ onCategoryChange }) => {
         const getCategories = async () => {
             try {
                 const fetchedCategories = await fetchCategories();
-                setCategories(fetchedCategories);
+                setCategories([ALL_CATEGORIES, ...fetchedCategories]);
             } catch (error) {
                 console.error("Error fetching categories:", error);
             }
@@ -28,7 +30,7 @@ const CategoryList: React.FC<CategoryListProps> = ({ onCategoryChange }) => {
 
     const handleChange = (event: SelectChangeEvent) => {
         const selectedCategoryId = event.target.value as string;
-        const selectedCategory = categories.find((cat) => cat.id === parseInt(selectedCategoryId)) || null;
+        const selectedCategory = categories.find((cat) => cat.id === parseInt(selectedCategoryId)) || ALL_CATEGORIES;
         setCategory(selectedCategory);
         onCategoryChange(selectedCategory);
     };
@@ -43,9 +45,6 @@ const CategoryList: React.FC<CategoryListProps> = ({ onCategoryChange }) => {
                 onChange={handleChange}
                 label="Category"
             >
-                <MenuItem value="">
-                    <em>All</em>
-                </MenuItem>
                 {categories.map((category) => (
                     <MenuItem key={category.id} value={category.id.toString()}>
                         {category.name}
