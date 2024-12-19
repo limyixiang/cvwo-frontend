@@ -37,7 +37,7 @@ const App: React.FC = () => {
                             path="/"
                             element={
                                 <PrivateRoute>
-                                    <Home user={user} />
+                                    <Home user={user} setUser={setUser} />
                                 </PrivateRoute>
                             }
                         />
