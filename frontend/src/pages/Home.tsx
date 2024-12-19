@@ -11,9 +11,14 @@ type HomeProps = {
 
 const Home: React.FC<HomeProps> = ({ user }) => {
     const [selectedCategory, setSelectedCategory] = useState<Category | null>(null);
+    const [refresh, setRefresh] = useState(false);
 
     const handleCategoryChange = (category: Category | null) => {
         setSelectedCategory(category);
+    };
+
+    const handlePostCreated = () => {
+        setRefresh((prev) => !prev);
     };
 
     return (
@@ -25,8 +30,8 @@ const Home: React.FC<HomeProps> = ({ user }) => {
             <br />
             <CategoryList onCategoryChange={handleCategoryChange} />
             {selectedCategory && <h4>{`Selected category: ${selectedCategory.name}`}</h4>}
-            <CreatePostModal />
-            <BasicThreadList />
+            <CreatePostModal user={user} onPostCreated={handlePostCreated} />
+            <BasicThreadList refresh={refresh} />
         </>
     );
 };

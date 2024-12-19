@@ -18,6 +18,16 @@ export const fetchUser = async (username: string) => {
     }
 };
 
+export const fetchUserByID = async (id: number) => {
+    try {
+        const response = await axios.get(`${URL}/api/users/id/${id}`);
+        return response.data.payload.data;
+    } catch (error) {
+        console.error(error);
+        throw error;
+    }
+};
+
 export const createUser = async (username: string) => {
     try {
         const response = await axios.post(`${URL}/api/users`, { name: username });
@@ -42,5 +52,38 @@ export const fetchCategories = async () => {
 // THREAD-RELATED
 
 // POST-RELATED
+export const createPost = async (
+    user_id: number,
+    category_id: number,
+    title: string,
+    content: string,
+    created_at: Date,
+    updated_at: Date,
+) => {
+    try {
+        const response = await axios.post(`${URL}/api/posts`, {
+            user_id,
+            category_id,
+            title,
+            content,
+            created_at,
+            updated_at,
+        });
+        return response.data.payload.data;
+    } catch (error) {
+        console.error(error);
+        throw error;
+    }
+};
+
+export const fetchPosts = async () => {
+    try {
+        const response = await axios.get(`${URL}/api/posts`);
+        return response.data.payload.data;
+    } catch (error) {
+        console.error(error);
+        throw error;
+    }
+};
 
 // COMMENT-RELATED

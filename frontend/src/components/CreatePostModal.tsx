@@ -1,3 +1,7 @@
+import CategoryList from "./CategoryList";
+import Category from "../types/Category";
+import User from "../types/User";
+import { createPost } from "../backend";
 import React, { useState } from "react";
 import { Button, Box, Modal, TextField } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
@@ -24,11 +28,52 @@ const useStyles = makeStyles({
     },
 });
 
-const CreatePostModal: React.FC = () => {
+type CreatePostModalProps = {
+    user: User | null;
+    onPostCreated: () => void;
+};
+
+const CreatePostModal: React.FC<CreatePostModalProps> = ({ user, onPostCreated }) => {
     const classes = useStyles();
     const [openModal, setOpenModal] = useState(false);
     const handleOpenModal = () => setOpenModal(true);
     const handleCloseModal = () => setOpenModal(false);
+    const [selectedCategory, setSelectedCategory] = useState<Category | null>(null);
+    const [title, setTitle] = useState("");
+    const [content, setContent] = useState("");
+
+    const handleCategoryChange = (category: Category | null) => {
+        setSelectedCategory(category);
+    };
+
+    const handleTitleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setTitle(event.target.value);
+    };
+
+    const handleContentChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setContent(event.target.value);
+    };
+
+    const handleSubmit = async () => {
+        if (!selectedCategory) {
+            alert("Please select a category");
+            return;
+        }
+
+        if (!user) {
+            alert("Please sign in to create a post");
+            return;
+        }
+
+        try {
+            const response = await createPost(user.id, selectedCategory.id, title, content, new Date(), new Date());
+            console.log("Post created:", response.data);
+            handleCloseModal();
+            onPostCreated();
+        } catch (error) {
+            console.error("Error creating post:", error);
+        }
+    };
 
     return (
         <div>
@@ -44,18 +89,23 @@ const CreatePostModal: React.FC = () => {
                         fullWidth
                         margin="normal"
                         className={classes.formControl}
+                        value={title}
+                        onChange={handleTitleChange}
                     />
+                    <CategoryList onCategoryChange={handleCategoryChange} />
                     <TextField
                         label="Content"
                         variant="outlined"
                         fullWidth
                         multiline
-                        maxRows={4}
+                        rows={4}
                         margin="normal"
                         className={classes.formControl}
+                        value={content}
+                        onChange={handleContentChange}
                     />
                     <Box className={classes.buttonContainer}>
-                        <Button variant="contained" color="primary">
+                        <Button variant="contained" color="primary" onClick={handleSubmit}>
                             Create
                         </Button>
                     </Box>
