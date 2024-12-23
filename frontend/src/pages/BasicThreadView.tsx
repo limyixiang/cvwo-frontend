@@ -1,7 +1,7 @@
 import BasicCommentList from "../components/CommentList";
 import User from "../types/User";
 import { Button, TextField } from "@mui/material";
-import { Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import Typewriter from "typewriter-effect";
 
 import React, { useState } from "react";
@@ -10,7 +10,8 @@ type BasicThreadViewProps = {
     user: User | null;
 };
 
-const BasicThreadView: React.FC<BasicThreadViewProps> = ({ user }) => {
+const BasicThreadView: React.FC<BasicThreadViewProps> = ({ user }: BasicThreadViewProps) => {
+    const { postID } = useParams<{ postID: string }>();
     const [isShowButton, setIsShowButton] = useState(false);
     const [isAddComment, setIsAddComment] = useState(false);
     const [commentText, setCommentText] = useState("");
@@ -39,7 +40,7 @@ const BasicThreadView: React.FC<BasicThreadViewProps> = ({ user }) => {
         <div style={{ width: "25vw", margin: "auto", textAlign: "center" }}>
             <h3>{"Inspirational Quotes"}</h3>
             <h4>{"Thread started by Aiken"}</h4>
-            <BasicCommentList styled={false} />
+            <BasicCommentList styled={false} postID={parseInt(postID || "0")} />
             <Link to="/">{`<- Back to threads`}</Link>
             <br />
             <br />

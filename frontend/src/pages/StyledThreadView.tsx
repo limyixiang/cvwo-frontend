@@ -1,7 +1,7 @@
 import BasicCommentList from "../components/CommentList";
 import User from "../types/User";
 import { Button, Card, CardContent, Fade, Typography } from "@mui/material";
-import { Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import Typewriter from "typewriter-effect";
 
 import React, { useState } from "react";
@@ -11,6 +11,7 @@ type StyledThreadViewProps = {
 };
 
 const StyledThreadView: React.FC<StyledThreadViewProps> = ({ user }) => {
+    const { postID } = useParams<{ postID: string }>();
     const [isShowTips, setIsShowTips] = useState(false);
 
     const showTips = () => {
@@ -56,7 +57,7 @@ const StyledThreadView: React.FC<StyledThreadViewProps> = ({ user }) => {
                 </CardContent>
             </Card>
 
-            <BasicCommentList styled={true} />
+            <BasicCommentList styled={true} postID={parseInt(postID || "0")} />
 
             <Link to="/">
                 <Button variant="contained" color="secondary">

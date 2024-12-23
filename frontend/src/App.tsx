@@ -42,7 +42,7 @@ const App: React.FC = () => {
                             }
                         />
                         <Route
-                            path="/thread/1"
+                            path="/thread/:postID"
                             element={
                                 <PrivateRoute>
                                     <BasicThreadView user={user} />
@@ -50,7 +50,7 @@ const App: React.FC = () => {
                             }
                         />
                         <Route
-                            path="/thread/1/styled"
+                            path="/thread/:postID/styled"
                             element={
                                 <PrivateRoute>
                                     <StyledThreadView user={user} />

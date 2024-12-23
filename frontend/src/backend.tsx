@@ -100,3 +100,12 @@ export const fetchPostsByCategory = async (category_id: number) => {
 };
 
 // COMMENT-RELATED
+export const fetchCommentsByPost = async (post_id: number) => {
+    try {
+        const response = await axios.get(`${URL}/api/comments/post/${post_id}`);
+        return response.data.payload.data;
+    } catch (error) {
+        console.error(error);
+        throw error;
+    }
+};

@@ -6,13 +6,14 @@ import Category from "../types/Category";
 
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
+import { Box, Card, CardContent, Typography, List, ListItem, ListItemText } from "@mui/material";
 
 type BasicThreadListProps = {
     refresh: boolean;
     selectedCategory: Category;
 };
 
-const BasicThreadList: React.FC<BasicThreadListProps> = ({ refresh, selectedCategory }) => {
+const BasicThreadList: React.FC<BasicThreadListProps> = ({ refresh, selectedCategory }: BasicThreadListProps) => {
     const [posts, setPosts] = useState<Post[]>([]);
     const [users, setUsers] = useState<{ [key: number]: User }>({});
 
@@ -42,25 +43,47 @@ const BasicThreadList: React.FC<BasicThreadListProps> = ({ refresh, selectedCate
     }, [refresh, selectedCategory]);
 
     return (
-        <div style={{ width: "25vw", margin: "auto", textAlign: "center" }}>
-            <h4>{"Welcome to my forum!"}</h4>
-            <ul>
-                <li>
-                    <Link to="/thread/1">{"Inspirational Quotes"}</Link>
-                    {" by Aiken"}
-                </li>
+        <div style={{ width: "50vw", margin: "auto", textAlign: "center" }}>
+            <Typography variant="h4" gutterBottom>
+                Welcome to my forum!
+            </Typography>
+            <List>
+                <ListItem>
+                    <Card style={{ width: "100%" }}>
+                        <CardContent>
+                            <Typography variant="h6">
+                                <Link to="/thread/1">Inspirational Quotes</Link>
+                            </Typography>
+                            <Typography color="textSecondary">by Aiken</Typography>
+                        </CardContent>
+                    </Card>
+                </ListItem>
                 {posts && posts.length > 0 ? (
                     posts.map((post) => (
-                        <li key={post.id}>
-                            <Link to={`/thread/${post.id}`}>{post.title}</Link>
-                            {" by "}
-                            {users[post.user_id]?.name || "Unknown"}
-                        </li>
+                        <ListItem key={post.id}>
+                            <Card style={{ width: "100%" }}>
+                                <CardContent>
+                                    <Typography variant="h6">
+                                        <Link to={`/thread/${post.id}`}>{post.title}</Link>
+                                    </Typography>
+                                    <Typography color="textSecondary">
+                                        by {users[post.user_id]?.name || "Unknown"}
+                                    </Typography>
+                                    <Box display="flex" justifyContent="flex-end" mt={2}>
+                                        <Typography variant="body2" color="textSecondary">
+                                            Last updated: {new Date(post.updated_at).toLocaleString()}
+                                        </Typography>
+                                    </Box>
+                                </CardContent>
+                            </Card>
+                        </ListItem>
                     ))
                 ) : (
-                    <li>No threads for now, be the first to start a thread!</li>
+                    <ListItem>
+                        <ListItemText primary="No threads for now, be the first to start a thread!" />
+                    </ListItem>
                 )}
-            </ul>
+            </List>
         </div>
     );
 };
