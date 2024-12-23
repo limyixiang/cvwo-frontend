@@ -44,9 +44,6 @@ const ThreadList: React.FC<ThreadListProps> = ({ refresh, selectedCategory }: Th
 
     return (
         <div style={{ width: "50vw", margin: "auto", textAlign: "center" }}>
-            <Typography variant="h4" gutterBottom>
-                Welcome to my forum!
-            </Typography>
             <List>
                 {posts && posts.length > 0 ? (
                     posts.map((post) => (

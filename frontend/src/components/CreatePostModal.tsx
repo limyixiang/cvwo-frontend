@@ -14,7 +14,7 @@ const useStyles = makeStyles({
         left: "50%",
         transform: "translate(-50%, -50%)",
         width: 400,
-        backgroundColor: "rgba(255, 255, 255, 0.83)",
+        backgroundColor: "rgba(255, 255, 255, 1)",
         border: "2px solid #000",
         boxShadow: "0px 3px 6px rgba(0, 0, 0, 0.16)",
         padding: "16px",

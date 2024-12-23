@@ -4,7 +4,7 @@ import ThreadList from "../components/ThreadList";
 import Category from "../types/Category";
 import User from "../types/User";
 import React, { useState } from "react";
-import { Button } from "@mui/material";
+import { Button, Container, Box, Typography, AppBar, Toolbar } from "@mui/material";
 
 type HomeProps = {
     user: User | null;
@@ -29,20 +29,32 @@ const Home: React.FC<HomeProps> = ({ user, setUser }) => {
     };
 
     return (
-        <>
-            <h3>
-                {"Welcome to CVWO's sample react app! Here's a basic list of forum threads for you to experiment with."}
-            </h3>
-            {user && <h4>{`Welcome, ${user.name}!`}</h4>}
-            <Button variant="outlined" color="secondary" onClick={handleSignOut}>
-                Sign Out
-            </Button>
-            <br />
-            <CategoryList onCategoryChange={handleCategoryChange} />
-            {selectedCategory && <h4>{`Selected category: ${selectedCategory.name}`}</h4>}
-            <CreatePostModal user={user} onPostCreated={handlePostCreated} />
-            <ThreadList refresh={refresh} selectedCategory={selectedCategory} />
-        </>
+        <Container maxWidth="md">
+            <AppBar position="static">
+                <Toolbar>
+                    <Typography variant="h6" sx={{ flexGrow: 1 }}>
+                        CampusConnect
+                    </Typography>
+                    {user && (
+                        <Button color="inherit" onClick={handleSignOut}>
+                            Sign Out
+                        </Button>
+                    )}
+                </Toolbar>
+            </AppBar>
+            <Box sx={{ textAlign: "center", marginTop: 4 }}>
+                <CategoryList onCategoryChange={handleCategoryChange} />
+                {user && (
+                    <Typography variant="h5" gutterBottom>
+                        {`Welcome, ${user.name}!`}
+                    </Typography>
+                )}
+                <Box sx={{ marginTop: 2 }}>
+                    <CreatePostModal user={user} onPostCreated={handlePostCreated} />
+                </Box>
+                <ThreadList refresh={refresh} selectedCategory={selectedCategory} />
+            </Box>
+        </Container>
     );
 };
 
