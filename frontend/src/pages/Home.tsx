@@ -44,12 +44,12 @@ const Home: React.FC<HomeProps> = ({ user, setUser }) => {
             </AppBar>
             <Box sx={{ textAlign: "center", marginTop: 4 }}>
                 <CategoryList onCategoryChange={handleCategoryChange} />
-                {user && (
-                    <Typography variant="h5" gutterBottom>
-                        {`Welcome, ${user.name}!`}
-                    </Typography>
-                )}
-                <Box sx={{ marginTop: 2 }}>
+                <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: 2 }}>
+                    {user && (
+                        <Typography variant="h5" gutterBottom>
+                            {`Welcome, ${user.name}!`}
+                        </Typography>
+                    )}
                     <CreatePostModal user={user} onPostCreated={handlePostCreated} />
                 </Box>
                 <ThreadList refresh={refresh} selectedCategory={selectedCategory} />

@@ -3,7 +3,7 @@ import Category from "../types/Category";
 import React, { useEffect, useState } from "react";
 // There is a bug in the following import statement with the linter (Cannot find SelectChangeEvent)
 // eslint-disable-next-line import/named
-import { Select, MenuItem, FormControl, InputLabel, SelectChangeEvent, Paper, Box } from "@mui/material";
+import { Select, MenuItem, FormControl, InputLabel, SelectChangeEvent } from "@mui/material";
 
 export const ALL_CATEGORIES: Category = { id: -1, name: "All" };
 
@@ -36,26 +36,22 @@ const CategoryList: React.FC<CategoryListProps> = ({ onCategoryChange }) => {
     };
 
     return (
-        <Paper elevation={3} sx={{ padding: 2, margin: 2 }}>
-            <Box sx={{ marginBottom: 2 }}>
-                <FormControl fullWidth variant="outlined" margin="normal">
-                    <InputLabel id="category-label">Category</InputLabel>
-                    <Select
-                        labelId="category-label"
-                        id="category-select"
-                        value={category ? category.id.toString() : ""}
-                        onChange={handleChange}
-                        label="Category"
-                    >
-                        {categories.map((category) => (
-                            <MenuItem key={category.id} value={category.id.toString()}>
-                                {category.name}
-                            </MenuItem>
-                        ))}
-                    </Select>
-                </FormControl>
-            </Box>
-        </Paper>
+        <FormControl fullWidth variant="outlined" margin="normal">
+            <InputLabel id="category-label">Category</InputLabel>
+            <Select
+                labelId="category-label"
+                id="category-select"
+                value={category ? category.id.toString() : ""}
+                onChange={handleChange}
+                label="Category"
+            >
+                {categories.map((category) => (
+                    <MenuItem key={category.id} value={category.id.toString()}>
+                        {category.name}
+                    </MenuItem>
+                ))}
+            </Select>
+        </FormControl>
     );
 };
 
