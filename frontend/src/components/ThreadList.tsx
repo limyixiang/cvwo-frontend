@@ -8,12 +8,12 @@ import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Box, Card, CardContent, Typography, List, ListItem, ListItemText } from "@mui/material";
 
-type BasicThreadListProps = {
+type ThreadListProps = {
     refresh: boolean;
     selectedCategory: Category;
 };
 
-const BasicThreadList: React.FC<BasicThreadListProps> = ({ refresh, selectedCategory }: BasicThreadListProps) => {
+const ThreadList: React.FC<ThreadListProps> = ({ refresh, selectedCategory }: ThreadListProps) => {
     const [posts, setPosts] = useState<Post[]>([]);
     const [users, setUsers] = useState<{ [key: number]: User }>({});
 
@@ -48,16 +48,6 @@ const BasicThreadList: React.FC<BasicThreadListProps> = ({ refresh, selectedCate
                 Welcome to my forum!
             </Typography>
             <List>
-                <ListItem>
-                    <Card style={{ width: "100%" }}>
-                        <CardContent>
-                            <Typography variant="h6">
-                                <Link to="/thread/1">Inspirational Quotes</Link>
-                            </Typography>
-                            <Typography color="textSecondary">by Aiken</Typography>
-                        </CardContent>
-                    </Card>
-                </ListItem>
                 {posts && posts.length > 0 ? (
                     posts.map((post) => (
                         <ListItem key={post.id}>
@@ -88,4 +78,4 @@ const BasicThreadList: React.FC<BasicThreadListProps> = ({ refresh, selectedCate
     );
 };
 
-export default BasicThreadList;
+export default ThreadList;

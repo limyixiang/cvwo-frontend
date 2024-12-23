@@ -1,12 +1,12 @@
 import Comment from "../types/Comment";
+import { fetchUserByID } from "../backend";
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Card, CardContent, Typography } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 
 type Props = {
     comment: Comment;
-    styled: boolean;
 };
 const useStyles = makeStyles(() => ({
     commentBody: {
@@ -22,31 +22,34 @@ const useStyles = makeStyles(() => ({
     },
 }));
 
-const CommentItem: React.FC<Props> = ({ comment, styled }) => {
+const CommentItem: React.FC<Props> = ({ comment }) => {
     const classes = useStyles();
+    const [commenterName, setCommenterName] = useState<string>("");
 
-    if (styled) {
-        return (
-            <Card className={classes.commentCard}>
-                <CardContent>
-                    <Typography variant="body2" color="textPrimary" className={classes.commentBody} component="p">
-                        {comment.content}
-                    </Typography>
-                    <Typography color="textSecondary" className={classes.metadata} gutterBottom>
-                        {"Posted by " + comment.user_id + " on " + comment.created_at.toLocaleString()}
-                    </Typography>
-                </CardContent>
-            </Card>
-        );
-    }
+    useEffect(() => {
+        const getUser = async () => {
+            try {
+                const user = await fetchUserByID(comment.user_id);
+                setCommenterName(user.name);
+            } catch (error) {
+                console.error("Error fetching commenter:", error);
+            }
+        };
 
-    // unstyled
+        getUser();
+    }, [comment.user_id]);
+
     return (
-        <li className={classes.commentBody}>
-            {comment.content}
-            <br />
-            <em>{"posted by " + comment.user_id + " on " + comment.created_at.toLocaleString()}</em>
-        </li>
+        <Card className={classes.commentCard}>
+            <CardContent>
+                <Typography variant="body2" color="textPrimary" className={classes.commentBody} component="p">
+                    {comment.content}
+                </Typography>
+                <Typography color="textSecondary" className={classes.metadata} gutterBottom>
+                    {"Posted by " + commenterName + " on " + new Date(comment.created_at).toLocaleString()}
+                </Typography>
+            </CardContent>
+        </Card>
     );
 };
 

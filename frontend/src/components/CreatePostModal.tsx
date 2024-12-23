@@ -65,8 +65,25 @@ const CreatePostModal: React.FC<CreatePostModalProps> = ({ user, onPostCreated }
             return;
         }
 
+        if (!title.trim()) {
+            alert("Title cannot be empty");
+            return;
+        }
+
+        if (!content.trim()) {
+            alert("Content cannot be empty");
+            return;
+        }
+
         try {
-            const response = await createPost(user.id, selectedCategory.id, title, content, new Date(), new Date());
+            const response = await createPost(
+                user.id,
+                selectedCategory.id,
+                title.trim(),
+                content.trim(),
+                new Date(),
+                new Date(),
+            );
             console.log("Post created:", response.data);
             handleCloseModal();
             onPostCreated();

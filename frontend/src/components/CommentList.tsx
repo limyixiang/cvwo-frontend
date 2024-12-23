@@ -5,25 +5,23 @@ import { fetchCommentsByPost } from "../backend";
 import React, { useEffect, useState } from "react";
 
 type CommentListProps = {
-    styled: boolean;
     postID: number;
+    refresh: boolean;
 };
 
-const CommentList: React.FC<CommentListProps> = ({ styled, postID }: CommentListProps) => {
+const CommentList: React.FC<CommentListProps> = ({ postID, refresh }: CommentListProps) => {
     const [comments, setComments] = useState<Comment[]>([]);
 
     useEffect(() => {
         fetchCommentsByPost(postID)
             .then((fetchedComments) => setComments(fetchedComments))
             .catch((error) => console.error("Error fetching comments:", error));
-    }, []);
-
-    console.log(comments);
+    }, [postID, refresh]);
 
     return (
         <ul>
             {comments
-                ? comments.map((comment) => <CommentItem comment={comment} styled={styled} key={comment.id} />)
+                ? comments.map((comment) => <CommentItem comment={comment} key={comment.id} />)
                 : "Be the first to comment!"}
         </ul>
     );

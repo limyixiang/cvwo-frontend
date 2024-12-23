@@ -1,8 +1,7 @@
-import BasicThreadView from "./pages/BasicThreadView";
+import ThreadView from "./pages/ThreadView";
 import Home from "./pages/Home";
 import PrivateRoute from "./components/PrivateRoute";
 import SignIn from "./pages/SignIn";
-import StyledThreadView from "./pages/StyledThreadView";
 import User from "./types/User";
 import React, { useState, useEffect } from "react";
 import "./App.css";
@@ -45,15 +44,7 @@ const App: React.FC = () => {
                             path="/thread/:postID"
                             element={
                                 <PrivateRoute>
-                                    <BasicThreadView user={user} />
-                                </PrivateRoute>
-                            }
-                        />
-                        <Route
-                            path="/thread/:postID/styled"
-                            element={
-                                <PrivateRoute>
-                                    <StyledThreadView user={user} />
+                                    <ThreadView user={user} />
                                 </PrivateRoute>
                             }
                         />
