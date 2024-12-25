@@ -136,3 +136,23 @@ export const createComment = async (
         throw error;
     }
 };
+
+export const updateComment = async (comment_id: number, content: string, updated_at: Date) => {
+    try {
+        const response = await axios.patch(`${URL}/api/comments/${comment_id}`, { content, updated_at });
+        return response.data.payload.data;
+    } catch (error) {
+        console.error(error);
+        throw error;
+    }
+};
+
+export const deleteComment = async (comment_id: number) => {
+    try {
+        await axios.delete(`${URL}/api/comments/${comment_id}`);
+        return;
+    } catch (error) {
+        console.error(error);
+        throw error;
+    }
+};

@@ -1,9 +1,21 @@
-import { createComment, fetchPostByID } from "../backend";
+import { createComment, fetchPostByID, fetchUserByID, updateComment, deleteComment } from "../backend";
 import CommentList from "../components/CommentList";
 import User from "../types/User";
 import Post from "../types/Post";
+import Comment from "../types/Comment";
 
-import { Button, TextField, Typography, Box, CircularProgress } from "@mui/material";
+import {
+    Button,
+    TextField,
+    Typography,
+    Box,
+    CircularProgress,
+    Dialog,
+    DialogActions,
+    DialogContent,
+    DialogContentText,
+    DialogTitle,
+} from "@mui/material";
 import { Link, useParams } from "react-router-dom";
 import React, { useState, useEffect } from "react";
 
@@ -14,15 +26,22 @@ type ThreadViewProps = {
 const ThreadView: React.FC<ThreadViewProps> = ({ user }: ThreadViewProps) => {
     const { postID } = useParams<{ postID: string }>();
     const [post, setPost] = useState<Post | null>(null);
+    const [postUserName, setPostUserName] = useState<string>("");
     const [isAddComment, setIsAddComment] = useState(false);
     const [commentText, setCommentText] = useState("");
     const [refreshComments, setRefreshComments] = useState(false);
     const [loading, setLoading] = useState(true);
+    const [editDialogOpen, setEditDialogOpen] = useState(false);
+    const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+    const [selectedComment, setSelectedComment] = useState<Comment | null>(null);
+    const [newCommentContent, setNewCommentContent] = useState("");
 
     useEffect(() => {
         const getPost = async () => {
             try {
                 const fetchedPost = await fetchPostByID(parseInt(postID || "0"));
+                const postUser = await fetchUserByID(fetchedPost.user_id);
+                setPostUserName(postUser.name);
                 setPost(fetchedPost);
                 setLoading(false);
             } catch (error) {
@@ -71,6 +90,52 @@ const ThreadView: React.FC<ThreadViewProps> = ({ user }: ThreadViewProps) => {
         }
     };
 
+    const handleEditComment = (comment: Comment) => {
+        setSelectedComment(comment);
+        setNewCommentContent(comment.content);
+        setEditDialogOpen(true);
+    };
+
+    const handleDeleteComment = (comment: Comment) => {
+        setSelectedComment(comment);
+        setDeleteDialogOpen(true);
+    };
+
+    const handleEditDialogClose = () => {
+        setEditDialogOpen(false);
+        setSelectedComment(null);
+        setNewCommentContent("");
+    };
+
+    const handleDeleteDialogClose = () => {
+        setDeleteDialogOpen(false);
+        setSelectedComment(null);
+    };
+
+    const handleEditDialogSubmit = async () => {
+        if (selectedComment && newCommentContent.trim() !== "") {
+            try {
+                await updateComment(selectedComment.id, newCommentContent.trim(), new Date());
+                setRefreshComments((prev) => !prev);
+                handleEditDialogClose();
+            } catch (error) {
+                console.error("Error updating comment:", error);
+            }
+        }
+    };
+
+    const handleDeleteDialogSubmit = async () => {
+        if (selectedComment) {
+            try {
+                await deleteComment(selectedComment.id);
+                setRefreshComments((prev) => !prev);
+                handleDeleteDialogClose();
+            } catch (error) {
+                console.error("Error deleting comment:", error);
+            }
+        }
+    };
+
     if (loading) {
         return (
             <Box sx={{ width: "60vw", margin: "auto", textAlign: "center", padding: 2 }}>
@@ -90,7 +155,7 @@ const ThreadView: React.FC<ThreadViewProps> = ({ user }: ThreadViewProps) => {
                         {post.content}
                     </Typography>
                     <Typography variant="subtitle2" gutterBottom>
-                        Thread started by {user?.name || "Unknown"} on {new Date(post.created_at).toLocaleString()}
+                        Thread started by {postUserName} on {new Date(post.created_at).toLocaleString()}
                     </Typography>
                 </>
             )}
@@ -116,12 +181,60 @@ const ThreadView: React.FC<ThreadViewProps> = ({ user }: ThreadViewProps) => {
                     </Button>
                 </Box>
             )}
-            <CommentList postID={parseInt(postID || "0")} refresh={refreshComments} />
+            <CommentList
+                postID={parseInt(postID || "0")}
+                refresh={refreshComments}
+                user={user}
+                onEdit={handleEditComment}
+                onDelete={handleDeleteComment}
+            />
             <Link to="/" style={{ textDecoration: "none" }}>
                 <Button variant="contained" color="secondary" sx={{ marginTop: 2 }}>
                     {"<- Back to threads"}
                 </Button>
             </Link>
+
+            {/* Edit Comment Dialog */}
+            <Dialog open={editDialogOpen} onClose={handleEditDialogClose}>
+                <DialogTitle>Edit Comment</DialogTitle>
+                <DialogContent>
+                    <TextField
+                        autoFocus
+                        margin="dense"
+                        id="edit-comment"
+                        label="Comment"
+                        type="text"
+                        fullWidth
+                        variant="outlined"
+                        value={newCommentContent}
+                        onChange={(e) => setNewCommentContent(e.target.value)}
+                    />
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={handleEditDialogClose} color="primary">
+                        Cancel
+                    </Button>
+                    <Button onClick={handleEditDialogSubmit} color="primary">
+                        Save
+                    </Button>
+                </DialogActions>
+            </Dialog>
+
+            {/* Delete Comment Dialog */}
+            <Dialog open={deleteDialogOpen} onClose={handleDeleteDialogClose}>
+                <DialogTitle>Delete Comment</DialogTitle>
+                <DialogContent>
+                    <DialogContentText>Are you sure you want to delete this comment?</DialogContentText>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={handleDeleteDialogClose} color="primary">
+                        Cancel
+                    </Button>
+                    <Button onClick={handleDeleteDialogSubmit} color="primary">
+                        Delete
+                    </Button>
+                </DialogActions>
+            </Dialog>
         </Box>
     );
 };
