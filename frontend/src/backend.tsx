@@ -109,6 +109,26 @@ export const fetchPostByID = async (post_id: number) => {
     }
 };
 
+export const updatePost = async (post_id: number, title: string, content: string, updated_at: Date) => {
+    try {
+        const response = await axios.patch(`${URL}/api/posts/${post_id}`, { title, content, updated_at });
+        return response.data.payload.data;
+    } catch (error) {
+        console.error(error);
+        throw error;
+    }
+};
+
+export const deletePost = async (post_id: number) => {
+    try {
+        await axios.delete(`${URL}/api/posts/${post_id}`);
+        return;
+    } catch (error) {
+        console.error(error);
+        throw error;
+    }
+};
+
 // COMMENT-RELATED
 export const fetchCommentsByPost = async (post_id: number) => {
     try {
