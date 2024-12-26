@@ -149,7 +149,7 @@ export const createComment = async (
 ) => {
     try {
         const response = await axios.post(`${URL}/api/comments`, { user_id, post_id, content, created_at, updated_at });
-        await axios.patch(`${URL}/api/posts/${post_id}`, { updated_at });
+        await axios.patch(`${URL}/api/posts/${post_id}/updatetime`, { updated_at });
         return response.data.payload.data;
     } catch (error) {
         console.error(error);

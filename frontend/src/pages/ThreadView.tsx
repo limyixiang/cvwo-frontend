@@ -11,25 +11,15 @@ import CommentList from "../components/CommentList";
 import User from "../types/User";
 import Post from "../types/Post";
 import Comment from "../types/Comment";
+import PostHeader from "../components/PostHeader";
+import CommentForm from "../components/CommentForm";
+import EditCommentDialog from "../components/EditCommentDialog";
+import DeleteCommentDialog from "../components/DeleteCommentDialog";
+import EditPostDialog from "../components/EditPostDialog";
+import DeletePostDialog from "../components/DeletePostDialog";
+import SnackbarNotification from "../components/SnackbarNotification";
 
-import {
-    Button,
-    TextField,
-    Typography,
-    Box,
-    CircularProgress,
-    Dialog,
-    DialogActions,
-    DialogContent,
-    DialogContentText,
-    DialogTitle,
-    IconButton,
-    Menu,
-    MenuItem,
-    Snackbar,
-    Alert,
-} from "@mui/material";
-import MoreVertIcon from "@mui/icons-material/MoreVert";
+import { Button, Box, CircularProgress } from "@mui/material";
 import { Link, useParams, useNavigate } from "react-router-dom";
 import React, { useState, useEffect } from "react";
 
@@ -278,47 +268,26 @@ const ThreadView: React.FC<ThreadViewProps> = ({ user }: ThreadViewProps) => {
     return (
         <Box sx={{ width: "60vw", margin: "auto", textAlign: "center", padding: 2 }}>
             {post && (
-                <>
-                    <Box display="flex" justifyContent="space-between" alignItems="center">
-                        <Typography variant="h4" gutterBottom>
-                            {post.title}
-                        </Typography>
-                        {user && user.id === post.user_id && (
-                            <IconButton onClick={handleMenuOpen}>
-                                <MoreVertIcon />
-                            </IconButton>
-                        )}
-                    </Box>
-                    <Typography variant="subtitle1" gutterBottom>
-                        {post.content}
-                    </Typography>
-                    <Typography variant="subtitle2" gutterBottom>
-                        Thread started by {postUserName} on {new Date(post.created_at).toLocaleString()}
-                    </Typography>
-                </>
+                <PostHeader
+                    post={post}
+                    user={user}
+                    postUserName={postUserName}
+                    anchorEl={anchorEl}
+                    handleMenuOpen={handleMenuOpen}
+                    handleMenuClose={handleMenuClose}
+                    handleEditPost={handleEditPost}
+                    handleDeletePost={handleDeletePost}
+                />
             )}
             <br />
-            <Button variant="outlined" color="primary" onClick={showCommentBox} sx={{ marginTop: 2 }}>
-                {"Reply"}
-            </Button>
-            {isAddComment && (
-                <Box sx={{ marginTop: 2 }}>
-                    <TextField
-                        id="outlined-multiline-static"
-                        label="Comment"
-                        multiline
-                        rows={4}
-                        placeholder={`Reply as ${user?.name}`}
-                        value={commentText}
-                        onChange={handleCommentChange}
-                        fullWidth
-                        variant="outlined"
-                    />
-                    <Button variant="contained" color="primary" onClick={handleCommentSubmit} sx={{ marginTop: 2 }}>
-                        {"Submit"}
-                    </Button>
-                </Box>
-            )}
+            <CommentForm
+                isAddComment={isAddComment}
+                commentText={commentText}
+                showCommentBox={showCommentBox}
+                handleCommentChange={handleCommentChange}
+                handleCommentSubmit={handleCommentSubmit}
+                user={user}
+            />
             <CommentList
                 postID={parseInt(postID || "0")}
                 refresh={refreshComments}
@@ -332,114 +301,42 @@ const ThreadView: React.FC<ThreadViewProps> = ({ user }: ThreadViewProps) => {
                 </Button>
             </Link>
 
-            {/* Edit Comment Dialog */}
-            <Dialog open={editDialogOpen} onClose={handleEditDialogClose}>
-                <DialogTitle>Edit Comment</DialogTitle>
-                <DialogContent>
-                    <TextField
-                        autoFocus
-                        margin="dense"
-                        id="edit-comment"
-                        label="Comment"
-                        type="text"
-                        fullWidth
-                        variant="outlined"
-                        value={newCommentContent}
-                        onChange={(e) => setNewCommentContent(e.target.value)}
-                    />
-                </DialogContent>
-                <DialogActions>
-                    <Button onClick={handleEditDialogClose} color="primary">
-                        Cancel
-                    </Button>
-                    <Button onClick={handleEditDialogSubmit} color="primary">
-                        Save
-                    </Button>
-                </DialogActions>
-            </Dialog>
+            <EditCommentDialog
+                open={editDialogOpen}
+                newCommentContent={newCommentContent}
+                handleClose={handleEditDialogClose}
+                handleSubmit={handleEditDialogSubmit}
+                handleContentChange={(e) => setNewCommentContent(e.target.value)}
+            />
 
-            {/* Delete Comment Dialog */}
-            <Dialog open={deleteDialogOpen} onClose={handleDeleteDialogClose}>
-                <DialogTitle>Delete Comment</DialogTitle>
-                <DialogContent>
-                    <DialogContentText>Are you sure you want to delete this comment?</DialogContentText>
-                </DialogContent>
-                <DialogActions>
-                    <Button onClick={handleDeleteDialogClose} color="primary">
-                        Cancel
-                    </Button>
-                    <Button onClick={handleDeleteDialogSubmit} color="primary">
-                        Delete
-                    </Button>
-                </DialogActions>
-            </Dialog>
+            <DeleteCommentDialog
+                open={deleteDialogOpen}
+                handleClose={handleDeleteDialogClose}
+                handleSubmit={handleDeleteDialogSubmit}
+            />
 
-            {/* Post Menu */}
-            <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleMenuClose}>
-                <MenuItem onClick={handleEditPost}>Edit Post</MenuItem>
-                <MenuItem onClick={handleDeletePost}>Delete Post</MenuItem>
-            </Menu>
+            <EditPostDialog
+                open={editPostDialogOpen}
+                newPostTitle={newPostTitle}
+                newPostContent={newPostContent}
+                handleClose={handleEditPostDialogClose}
+                handleSubmit={handleEditPostDialogSubmit}
+                handleTitleChange={(e) => setNewPostTitle(e.target.value)}
+                handleContentChange={(e) => setNewPostContent(e.target.value)}
+            />
 
-            {/* Edit Post Dialog */}
-            <Dialog open={editPostDialogOpen} onClose={handleEditPostDialogClose}>
-                <DialogTitle>Edit Post</DialogTitle>
-                <DialogContent>
-                    <TextField
-                        autoFocus
-                        margin="dense"
-                        id="edit-post-title"
-                        label="Title"
-                        type="text"
-                        fullWidth
-                        variant="outlined"
-                        value={newPostTitle}
-                        onChange={(e) => setNewPostTitle(e.target.value)}
-                    />
-                    <TextField
-                        margin="dense"
-                        id="edit-post-content"
-                        label="Content"
-                        type="text"
-                        fullWidth
-                        multiline
-                        rows={4}
-                        variant="outlined"
-                        value={newPostContent}
-                        onChange={(e) => setNewPostContent(e.target.value)}
-                    />
-                </DialogContent>
-                <DialogActions>
-                    <Button onClick={handleEditPostDialogClose} color="primary">
-                        Cancel
-                    </Button>
-                    <Button onClick={handleEditPostDialogSubmit} color="primary">
-                        Save
-                    </Button>
-                </DialogActions>
-            </Dialog>
+            <DeletePostDialog
+                open={deletePostDialogOpen}
+                handleClose={handleDeletePostDialogClose}
+                handleSubmit={handleDeletePostDialogSubmit}
+            />
 
-            {/* Delete Post Dialog */}
-            <Dialog open={deletePostDialogOpen} onClose={handleDeletePostDialogClose}>
-                <DialogTitle>Delete Post</DialogTitle>
-                <DialogContent>
-                    <DialogContentText>Are you sure you want to delete this post?</DialogContentText>
-                </DialogContent>
-                <DialogActions>
-                    <Button onClick={handleDeletePostDialogClose} color="primary">
-                        Cancel
-                    </Button>
-                    <Button onClick={handleDeletePostDialogSubmit} color="primary">
-                        Delete
-                    </Button>
-                </DialogActions>
-            </Dialog>
-
-            {/* Snackbar */}
-            <Snackbar open={snackbarOpen} autoHideDuration={6000} onClose={handleSnackbarClose}>
-                <Alert onClose={handleSnackbarClose} severity={snackbarSeverity} sx={{ width: "100%" }}>
-                    {snackbarMessage}
-                </Alert>
-            </Snackbar>
+            <SnackbarNotification
+                open={snackbarOpen}
+                message={snackbarMessage}
+                severity={snackbarSeverity}
+                handleClose={handleSnackbarClose}
+            />
         </Box>
     );
 };
