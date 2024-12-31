@@ -1,6 +1,6 @@
 import User from "../types/User";
 import { fetchUser, createUser } from "../backend";
-import { Container, Box, TextField, Button, Typography } from "@mui/material";
+import { Container, Box, TextField, Button, Typography, Snackbar, Alert } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import React, { useState } from "react";
 
@@ -11,6 +11,13 @@ type SignInProps = {
 const SignIn: React.FC<SignInProps> = ({ setUser }) => {
     const [username, setUsername] = useState("");
     const navigate = useNavigate();
+    const [snackbarOpen, setSnackbarOpen] = useState(false);
+    const [snackbarMessage, setSnackbarMessage] = useState("");
+    const [snackbarSeverity, setSnackbarSeverity] = useState<"success" | "error" | "warning" | "info">("info");
+
+    const handleSnackbarClose = () => {
+        setSnackbarOpen(false);
+    };
 
     const handleUsernameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setUsername(event.target.value);
@@ -20,8 +27,15 @@ const SignIn: React.FC<SignInProps> = ({ setUser }) => {
         event.preventDefault();
         try {
             let user: User;
+            const trimmedUsername = username.trim();
+            if (trimmedUsername.length === 0) {
+                setSnackbarMessage("Please enter a username");
+                setSnackbarSeverity("warning");
+                setSnackbarOpen(true);
+                return;
+            }
             try {
-                user = await fetchUser(username);
+                user = await fetchUser(username.trim());
                 console.log("fetched user: ", user);
             } catch (error) {
                 if (error instanceof Error && error.message === "User not found") {
@@ -64,6 +78,11 @@ const SignIn: React.FC<SignInProps> = ({ setUser }) => {
                     </Button>
                 </Box>
             </Box>
+            <Snackbar open={snackbarOpen} autoHideDuration={6000} onClose={handleSnackbarClose}>
+                <Alert onClose={handleSnackbarClose} severity={snackbarSeverity} sx={{ width: "100%" }}>
+                    {snackbarMessage}
+                </Alert>
+            </Snackbar>
         </Container>
     );
 };
