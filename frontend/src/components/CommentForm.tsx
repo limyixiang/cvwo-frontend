@@ -5,23 +5,23 @@ import { Box, Button, TextField } from "@mui/material";
 type CommentFormProps = {
     isAddComment: boolean;
     commentText: string;
-    showCommentBox: () => void;
+    handleCommentBoxClick: () => void;
     handleCommentChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
     handleCommentSubmit: () => void;
-    user: User | null; // Add user prop to dynamically show the user's name in the placeholder
+    user: User | null;
 };
 
 const CommentForm: React.FC<CommentFormProps> = ({
     isAddComment,
     commentText,
-    showCommentBox,
+    handleCommentBoxClick,
     handleCommentChange,
     handleCommentSubmit,
     user,
 }) => {
     return (
         <>
-            <Button variant="outlined" color="primary" onClick={showCommentBox} sx={{ marginTop: 2 }}>
+            <Button variant="outlined" color="primary" onClick={handleCommentBoxClick} sx={{ marginTop: 2 }}>
                 {"Reply"}
             </Button>
             {isAddComment && (

@@ -70,8 +70,8 @@ const ThreadView: React.FC<ThreadViewProps> = ({ user }: ThreadViewProps) => {
         setIsAddComment(false);
     };
 
-    const showCommentBox = () => {
-        setIsAddComment(true);
+    const handleCommentBoxClick = () => {
+        setIsAddComment((prev) => !prev);
     };
 
     const handleCommentChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -283,7 +283,7 @@ const ThreadView: React.FC<ThreadViewProps> = ({ user }: ThreadViewProps) => {
             <CommentForm
                 isAddComment={isAddComment}
                 commentText={commentText}
-                showCommentBox={showCommentBox}
+                handleCommentBoxClick={handleCommentBoxClick}
                 handleCommentChange={handleCommentChange}
                 handleCommentSubmit={handleCommentSubmit}
                 user={user}
