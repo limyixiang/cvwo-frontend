@@ -6,7 +6,19 @@ import Category from "../types/Category";
 
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { Box, Card, CardContent, Typography, List, ListItem, ListItemText } from "@mui/material";
+import {
+    Box,
+    Card,
+    CardContent,
+    Typography,
+    List,
+    ListItem,
+    ListItemText,
+    Button,
+    Menu,
+    MenuItem,
+} from "@mui/material";
+import SortIcon from "@mui/icons-material/Sort";
 
 type ThreadListProps = {
     refresh: boolean;
@@ -16,14 +28,15 @@ type ThreadListProps = {
 const ThreadList: React.FC<ThreadListProps> = ({ refresh, selectedCategory }: ThreadListProps) => {
     const [posts, setPosts] = useState<Post[]>([]);
     const [users, setUsers] = useState<{ [key: number]: User }>({});
+    const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
+    const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 
     useEffect(() => {
         const getPostsAndUsers = async () => {
             try {
                 const fetchedPosts = await fetchPostsByCategory(selectedCategory.id);
-                setPosts(fetchedPosts);
-
                 if (fetchedPosts) {
+                    setPosts(fetchedPosts);
                     const userPromises = fetchedPosts.map((post: Post) => fetchUserByID(post.user_id));
                     const fetchedUsers = await Promise.all(userPromises);
 
@@ -33,6 +46,8 @@ const ThreadList: React.FC<ThreadListProps> = ({ refresh, selectedCategory }: Th
                     });
 
                     setUsers(usersMap);
+                } else {
+                    setPosts([]);
                 }
             } catch (error) {
                 console.error(error);
@@ -42,11 +57,41 @@ const ThreadList: React.FC<ThreadListProps> = ({ refresh, selectedCategory }: Th
         getPostsAndUsers();
     }, [refresh, selectedCategory]);
 
+    const handleSortOrderChange = (order: "asc" | "desc") => {
+        setSortOrder(order);
+        setAnchorEl(null);
+    };
+
+    const handleMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
+        setAnchorEl(event.currentTarget);
+    };
+
+    const handleMenuClose = () => {
+        setAnchorEl(null);
+    };
+
+    const sortedPosts = [...posts].sort((a, b) => {
+        if (sortOrder === "asc") {
+            return new Date(a.updated_at).getTime() - new Date(b.updated_at).getTime();
+        } else {
+            return new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime();
+        }
+    });
+
     return (
         <div style={{ width: "50vw", margin: "auto", textAlign: "center" }}>
+            <Box display="flex" justifyContent="flex-end" mb={2}>
+                <Button variant="outlined" onClick={handleMenuOpen} startIcon={<SortIcon />}>
+                    Sort
+                </Button>
+                <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleMenuClose}>
+                    <MenuItem onClick={() => handleSortOrderChange("asc")}>Ascending</MenuItem>
+                    <MenuItem onClick={() => handleSortOrderChange("desc")}>Descending</MenuItem>
+                </Menu>
+            </Box>
             <List>
-                {posts && posts.length > 0 ? (
-                    posts.map((post) => (
+                {sortedPosts && sortedPosts.length > 0 ? (
+                    sortedPosts.map((post) => (
                         <ListItem key={post.id}>
                             <Card style={{ width: "100%" }}>
                                 <CardContent>
