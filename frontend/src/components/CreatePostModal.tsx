@@ -3,7 +3,7 @@ import Category from "../types/Category";
 import User from "../types/User";
 import { createPost } from "../backend";
 import React, { useState } from "react";
-import { Button, Box, Modal, TextField } from "@mui/material";
+import { Button, Box, Modal, TextField, Snackbar, Alert } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import { makeStyles } from "@mui/styles";
 
@@ -36,11 +36,21 @@ type CreatePostModalProps = {
 const CreatePostModal: React.FC<CreatePostModalProps> = ({ user, onPostCreated }) => {
     const classes = useStyles();
     const [openModal, setOpenModal] = useState(false);
-    const handleOpenModal = () => setOpenModal(true);
-    const handleCloseModal = () => setOpenModal(false);
     const [selectedCategory, setSelectedCategory] = useState<Category | null>(null);
     const [title, setTitle] = useState("");
     const [content, setContent] = useState("");
+    const [snackbarOpen, setSnackbarOpen] = useState(false);
+    const [snackbarMessage, setSnackbarMessage] = useState("");
+    const [snackbarSeverity, setSnackbarSeverity] = useState<"success" | "error" | "warning" | "info">("info");
+
+    const handleOpenModal = () => setOpenModal(true);
+
+    const handleCloseModal = () => {
+        setOpenModal(false);
+        setSelectedCategory(null);
+        setTitle("");
+        setContent("");
+    };
 
     const handleCategoryChange = (category: Category | null) => {
         setSelectedCategory(category);
@@ -54,24 +64,36 @@ const CreatePostModal: React.FC<CreatePostModalProps> = ({ user, onPostCreated }
         setContent(event.target.value);
     };
 
+    const handleSnackbarClose = () => {
+        setSnackbarOpen(false);
+    };
+
     const handleSubmit = async () => {
         if (!selectedCategory) {
-            alert("Please select a category");
+            setSnackbarMessage("Please select a category");
+            setSnackbarSeverity("warning");
+            setSnackbarOpen(true);
             return;
         }
 
         if (!user) {
-            alert("Please sign in to create a post");
+            setSnackbarMessage("Please sign in to create a post");
+            setSnackbarSeverity("warning");
+            setSnackbarOpen(true);
             return;
         }
 
         if (!title.trim()) {
-            alert("Title cannot be empty");
+            setSnackbarMessage("Title cannot be empty");
+            setSnackbarSeverity("warning");
+            setSnackbarOpen(true);
             return;
         }
 
         if (!content.trim()) {
-            alert("Content cannot be empty");
+            setSnackbarMessage("Content cannot be empty");
+            setSnackbarSeverity("warning");
+            setSnackbarOpen(true);
             return;
         }
 
@@ -87,8 +109,14 @@ const CreatePostModal: React.FC<CreatePostModalProps> = ({ user, onPostCreated }
             console.log("Post created:", response.data);
             handleCloseModal();
             onPostCreated();
+            setSnackbarMessage("Post created successfully");
+            setSnackbarSeverity("success");
+            setSnackbarOpen(true);
         } catch (error) {
             console.error("Error creating post:", error);
+            setSnackbarMessage("Error creating post");
+            setSnackbarSeverity("error");
+            setSnackbarOpen(true);
         }
     };
 
@@ -128,6 +156,11 @@ const CreatePostModal: React.FC<CreatePostModalProps> = ({ user, onPostCreated }
                     </Box>
                 </div>
             </Modal>
+            <Snackbar open={snackbarOpen} autoHideDuration={6000} onClose={handleSnackbarClose}>
+                <Alert onClose={handleSnackbarClose} severity={snackbarSeverity} sx={{ width: "100%" }}>
+                    {snackbarMessage}
+                </Alert>
+            </Snackbar>
         </div>
     );
 };
