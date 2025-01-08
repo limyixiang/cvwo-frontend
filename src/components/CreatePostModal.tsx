@@ -5,28 +5,28 @@ import { createPost } from "../backend";
 import React, { useState } from "react";
 import { Button, Box, Modal, TextField, Snackbar, Alert } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
-import { makeStyles } from "@mui/styles";
+import { styled } from "@mui/material/styles";
 
-const useStyles = makeStyles({
-    modal: {
-        position: "absolute",
-        top: "50%",
-        left: "50%",
-        transform: "translate(-50%, -50%)",
-        width: 400,
-        backgroundColor: "rgba(255, 255, 255, 1)",
-        border: "2px solid #000",
-        boxShadow: "0px 3px 6px rgba(0, 0, 0, 0.16)",
-        padding: "16px",
-        borderRadius: "8px",
-    },
-    formControl: {
-        marginBottom: "16px",
-    },
-    buttonContainer: {
-        marginTop: "16px",
-    },
-});
+const ModalContainer = styled("div")(() => ({
+    position: "absolute",
+    top: "50%",
+    left: "50%",
+    transform: "translate(-50%, -50%)",
+    width: 400,
+    backgroundColor: "rgba(255, 255, 255, 1)",
+    border: "2px solid #000",
+    boxShadow: "0px 3px 6px rgba(0, 0, 0, 0.16)",
+    padding: "16px",
+    borderRadius: "8px",
+}));
+
+const FormControl = styled(TextField)(() => ({
+    marginBottom: "16px",
+}));
+
+const ButtonContainer = styled(Box)(() => ({
+    marginTop: "16px",
+}));
 
 type CreatePostModalProps = {
     user: User | null;
@@ -34,7 +34,6 @@ type CreatePostModalProps = {
 };
 
 const CreatePostModal: React.FC<CreatePostModalProps> = ({ user, onPostCreated }) => {
-    const classes = useStyles();
     const [openModal, setOpenModal] = useState(false);
     const [selectedCategory, setSelectedCategory] = useState<Category | null>(null);
     const [title, setTitle] = useState("");
@@ -126,35 +125,33 @@ const CreatePostModal: React.FC<CreatePostModalProps> = ({ user, onPostCreated }
                 Create
             </Button>
             <Modal open={openModal} onClose={handleCloseModal}>
-                <div className={classes.modal}>
+                <ModalContainer>
                     <h2>Create a new post</h2>
-                    <TextField
+                    <FormControl
                         label="Title"
                         variant="outlined"
                         fullWidth
                         margin="normal"
-                        className={classes.formControl}
                         value={title}
                         onChange={handleTitleChange}
                     />
                     <CategoryList onCategoryChange={handleCategoryChange} />
-                    <TextField
+                    <FormControl
                         label="Content"
                         variant="outlined"
                         fullWidth
                         multiline
                         rows={4}
                         margin="normal"
-                        className={classes.formControl}
                         value={content}
                         onChange={handleContentChange}
                     />
-                    <Box className={classes.buttonContainer}>
+                    <ButtonContainer>
                         <Button variant="contained" color="primary" onClick={handleSubmit}>
                             Create
                         </Button>
-                    </Box>
-                </div>
+                    </ButtonContainer>
+                </ModalContainer>
             </Modal>
             <Snackbar open={snackbarOpen} autoHideDuration={6000} onClose={handleSnackbarClose}>
                 <Alert onClose={handleSnackbarClose} severity={snackbarSeverity} sx={{ width: "100%" }}>

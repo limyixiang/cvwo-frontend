@@ -6,7 +6,7 @@ import React, { useEffect, useState } from "react";
 import { Card, CardContent, Typography, IconButton, Box } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
-import { makeStyles } from "@mui/styles";
+import { styled } from "@mui/material/styles";
 
 type CommentItemProps = {
     comment: Comment;
@@ -14,22 +14,22 @@ type CommentItemProps = {
     onEdit: (comment: Comment) => void;
     onDelete: (comment: Comment) => void;
 };
-const useStyles = makeStyles(() => ({
-    commentBody: {
-        fontSize: 16,
-        whiteSpace: "pre-wrap",
-        paddingBottom: "1em",
-    },
-    commentCard: {
-        marginBottom: "1em",
-    },
-    metadata: {
-        fontSize: 14,
-    },
+
+const CommentCard = styled(Card)(() => ({
+    marginBottom: "1em",
+}));
+
+const CommentBody = styled(Typography)(() => ({
+    fontSize: 16,
+    whiteSpace: "pre-wrap",
+    paddingBottom: "1em",
+}));
+
+const Metadata = styled(Typography)(() => ({
+    fontSize: 14,
 }));
 
 const CommentItem: React.FC<CommentItemProps> = ({ comment, user, onEdit, onDelete }: CommentItemProps) => {
-    const classes = useStyles();
     const [commenterName, setCommenterName] = useState<string>("");
 
     useEffect(() => {
@@ -54,15 +54,15 @@ const CommentItem: React.FC<CommentItemProps> = ({ comment, user, onEdit, onDele
     };
 
     return (
-        <Card className={classes.commentCard}>
+        <CommentCard>
             <CardContent>
-                <Typography variant="body2" color="textPrimary" className={classes.commentBody} component="p">
+                <CommentBody variant="body2" color="textPrimary">
                     {comment.content}
-                </Typography>
+                </CommentBody>
                 <Box display="flex" justifyContent="space-between" alignItems="center">
-                    <Typography color="textSecondary" className={classes.metadata} gutterBottom>
+                    <Metadata color="textSecondary" gutterBottom>
                         {"Posted by " + commenterName + " on " + new Date(comment.created_at).toLocaleString()}
-                    </Typography>
+                    </Metadata>
                     {user && user.id === comment.user_id && (
                         <Box>
                             <IconButton onClick={handleEdit} size="small">
@@ -75,7 +75,7 @@ const CommentItem: React.FC<CommentItemProps> = ({ comment, user, onEdit, onDele
                     )}
                 </Box>
             </CardContent>
-        </Card>
+        </CommentCard>
     );
 };
 
