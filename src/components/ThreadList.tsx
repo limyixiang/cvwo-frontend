@@ -92,7 +92,7 @@ const ThreadList: React.FC<ThreadListProps> = ({ refresh, selectedCategory }: Th
             <CircularProgress />
         </Box>
     ) : (
-        <div style={{ width: "50vw", margin: "auto", textAlign: "center" }}>
+        <div>
             <Box display="flex" justifyContent="flex-end" mb={2}>
                 <Button variant="outlined" onClick={handleMenuOpen} startIcon={<SortIcon />}>
                     Sort

@@ -52,7 +52,9 @@ const Home: React.FC<HomeProps> = ({ user, setUser }) => {
                     )}
                     <CreatePostModal user={user} onPostCreated={handlePostCreated} />
                 </Box>
-                <ThreadList refresh={refresh} selectedCategory={selectedCategory} />
+                <Box sx={{ width: "100%", marginTop: 2 }}>
+                    <ThreadList refresh={refresh} selectedCategory={selectedCategory} />
+                </Box>
             </Box>
         </Container>
     );
