@@ -17,6 +17,7 @@ import {
     Button,
     Menu,
     MenuItem,
+    CircularProgress,
 } from "@mui/material";
 import SortIcon from "@mui/icons-material/Sort";
 
@@ -30,6 +31,11 @@ const ThreadList: React.FC<ThreadListProps> = ({ refresh, selectedCategory }: Th
     const [users, setUsers] = useState<{ [key: number]: User }>({});
     const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        setLoading(true);
+    }, [selectedCategory, refresh]);
 
     useEffect(() => {
         const getPostsAndUsers = async () => {
@@ -51,11 +57,14 @@ const ThreadList: React.FC<ThreadListProps> = ({ refresh, selectedCategory }: Th
                 }
             } catch (error) {
                 console.error(error);
+            } finally {
+                console.log("done loading");
+                setLoading(false);
             }
         };
 
         getPostsAndUsers();
-    }, [refresh, selectedCategory]);
+    }, [refresh, selectedCategory, setLoading]);
 
     const handleSortOrderChange = (order: "asc" | "desc") => {
         setSortOrder(order);
@@ -78,7 +87,11 @@ const ThreadList: React.FC<ThreadListProps> = ({ refresh, selectedCategory }: Th
         }
     });
 
-    return (
+    return loading ? (
+        <Box display="flex" justifyContent="center" mt={4}>
+            <CircularProgress />
+        </Box>
+    ) : (
         <div style={{ width: "50vw", margin: "auto", textAlign: "center" }}>
             <Box display="flex" justifyContent="flex-end" mb={2}>
                 <Button variant="outlined" onClick={handleMenuOpen} startIcon={<SortIcon />}>
