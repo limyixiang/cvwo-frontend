@@ -2,6 +2,10 @@
 
 CampusConnect is a web forum application that allows users to create, view, edit and delete posts and comments within various categories. This project is built using a combination of MySQL and Go for the backend, and React and TypeScript for the frontend. The backend is responsible for handling API requests, interacting iwth the database, and managing the logic of the application.
 
+## Author
+
+Lim Yixiang
+
 ## Getting Started
 
 ### Running the app
