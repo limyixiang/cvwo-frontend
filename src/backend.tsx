@@ -1,7 +1,7 @@
 import axios, { isAxiosError } from "axios";
 
-// const URL = "http://localhost:8080";
-const URL = "https://cvwo-backend-yixiang-f54bf3fe1878.herokuapp.com";
+const URL = "http://localhost:8080";
+// const URL = "https://cvwo-backend-yixiang-f54bf3fe1878.herokuapp.com";
 
 // USER-RELATED
 export const fetchUser = async (username: string) => {
@@ -172,6 +172,16 @@ export const deleteComment = async (comment_id: number) => {
     try {
         await axios.delete(`${URL}/api/comments/${comment_id}`);
         return;
+    } catch (error) {
+        console.error(error);
+        throw error;
+    }
+};
+
+export const likeComment = async (comment_id: number, user_id: number) => {
+    try {
+        const response = await axios.patch(`${URL}/api/comments/${comment_id}/like`, { user_id });
+        return response.data.payload.data;
     } catch (error) {
         console.error(error);
         throw error;

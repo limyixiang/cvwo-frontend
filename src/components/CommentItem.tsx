@@ -1,11 +1,13 @@
 import Comment from "../types/Comment";
 import User from "../types/User";
-import { fetchUserByID } from "../backend";
+import { fetchUserByID, likeComment } from "../backend";
 
 import React, { useEffect, useState } from "react";
-import { Card, CardContent, Typography, IconButton, Box } from "@mui/material";
-import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
+import EditIcon from "@mui/icons-material/Edit";
+import ThumbUpIcon from "@mui/icons-material/ThumbUp";
+import ThumbDownIcon from "@mui/icons-material/ThumbDown";
+import { Card, CardContent, Typography, IconButton, Box } from "@mui/material";
 import { styled } from "@mui/material/styles";
 
 type CommentItemProps = {
@@ -53,26 +55,58 @@ const CommentItem: React.FC<CommentItemProps> = ({ comment, user, onEdit, onDele
         onDelete(comment);
     };
 
+    const handleLike = async () => {
+        // to be completed
+        console.log(comment.likes);
+    };
+
+    const handleDislike = async () => {
+        // to be completed
+    };
+
     return (
         <CommentCard>
             <CardContent>
+                <Box display="flex" justifyContent="space-between">
+                    <Box>
+                        <Metadata color="textSecondary" gutterBottom>
+                            {"Posted by " + commenterName + " on " + new Date(comment.created_at).toLocaleString()}
+                        </Metadata>
+                    </Box>
+                    <Box>
+                        {user && user.id === comment.user_id ? (
+                            <>
+                                <IconButton onClick={handleEdit} size="small">
+                                    <EditIcon fontSize="small" />
+                                </IconButton>
+                                <IconButton onClick={handleDelete} size="small">
+                                    <DeleteIcon fontSize="small" />
+                                </IconButton>
+                            </>
+                        ) : (
+                            // Empty box to maintain spacing
+                            <></>
+                        )}
+                    </Box>
+                </Box>
                 <CommentBody variant="body2" color="textPrimary">
                     {comment.content}
                 </CommentBody>
                 <Box display="flex" justifyContent="space-between" alignItems="center">
-                    <Metadata color="textSecondary" gutterBottom>
-                        {"Posted by " + commenterName + " on " + new Date(comment.created_at).toLocaleString()}
-                    </Metadata>
-                    {user && user.id === comment.user_id && (
-                        <Box>
-                            <IconButton onClick={handleEdit} size="small">
-                                <EditIcon fontSize="small" />
-                            </IconButton>
-                            <IconButton onClick={handleDelete} size="small">
-                                <DeleteIcon fontSize="small" />
-                            </IconButton>
+                    <Box>
+                        <IconButton onClick={handleLike} size="small">
+                            <ThumbUpIcon fontSize="small" />
+                        </IconButton>
+                        <Box display="inline" ml={0.5} mr={0.5}>
+                            {comment.likes}
                         </Box>
-                    )}
+                        <IconButton onClick={handleDislike} size="small">
+                            <ThumbDownIcon fontSize="small" />
+                        </IconButton>
+                        <Box display="inline" ml={0.5}>
+                            {comment.dislikes}
+                        </Box>
+                    </Box>
                 </Box>
             </CardContent>
         </CommentCard>
