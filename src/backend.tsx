@@ -187,3 +187,53 @@ export const likeComment = async (comment_id: number, user_id: number) => {
         throw error;
     }
 };
+
+export const unlikeComment = async (comment_id: number, user_id: number) => {
+    try {
+        const response = await axios.patch(`${URL}/api/comments/${comment_id}/unlike`, { user_id });
+        return response.data.payload.data;
+    } catch (error) {
+        console.error(error);
+        throw error;
+    }
+};
+
+export const dislikeComment = async (comment_id: number, user_id: number) => {
+    try {
+        const response = await axios.patch(`${URL}/api/comments/${comment_id}/dislike`, { user_id });
+        return response.data.payload.data;
+    } catch (error) {
+        console.error(error);
+        throw error;
+    }
+};
+
+export const undislikeComment = async (comment_id: number, user_id: number) => {
+    try {
+        const response = await axios.patch(`${URL}/api/comments/${comment_id}/undislike`, { user_id });
+        return response.data.payload.data;
+    } catch (error) {
+        console.error(error);
+        throw error;
+    }
+};
+
+export const checkCommentLikedByUser = async (comment_id: number, user_id: number) => {
+    try {
+        const response = await axios.get(`${URL}/api/comments/${comment_id}/checklike/${user_id}`);
+        return response.data.payload.data;
+    } catch (error) {
+        console.error(error);
+        throw error;
+    }
+};
+
+export const checkCommentDislikedByUser = async (comment_id: number, user_id: number) => {
+    try {
+        const response = await axios.get(`${URL}/api/comments/${comment_id}/checkdislike/${user_id}`);
+        return response.data.payload.data;
+    } catch (error) {
+        console.error(error);
+        throw error;
+    }
+};

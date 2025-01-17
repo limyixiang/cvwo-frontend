@@ -1,6 +1,14 @@
 import Comment from "../types/Comment";
 import User from "../types/User";
-import { fetchUserByID, likeComment } from "../backend";
+import {
+    fetchUserByID,
+    likeComment,
+    unlikeComment,
+    dislikeComment,
+    undislikeComment,
+    checkCommentLikedByUser,
+    checkCommentDislikedByUser,
+} from "../backend";
 
 import React, { useEffect, useState } from "react";
 import DeleteIcon from "@mui/icons-material/Delete";
@@ -33,6 +41,10 @@ const Metadata = styled(Typography)(() => ({
 
 const CommentItem: React.FC<CommentItemProps> = ({ comment, user, onEdit, onDelete }: CommentItemProps) => {
     const [commenterName, setCommenterName] = useState<string>("");
+    const [liked, setLiked] = useState<boolean>(false);
+    const [disliked, setDisliked] = useState<boolean>(false);
+    const [numLikes, setNumLikes] = useState<number>(comment.likes);
+    const [numDislikes, setNumDislikes] = useState<number>(comment.dislikes);
 
     useEffect(() => {
         const getUser = async () => {
@@ -47,6 +59,34 @@ const CommentItem: React.FC<CommentItemProps> = ({ comment, user, onEdit, onDele
         getUser();
     }, [comment.user_id]);
 
+    useEffect(() => {
+        const checkLiked = async () => {
+            if (user) {
+                try {
+                    const liked = await checkCommentLikedByUser(comment.id, user.id);
+                    console.log("liked", liked);
+                    setLiked(liked);
+                } catch (error) {
+                    console.error("Error checking if comment is liked by user:", error);
+                }
+            }
+        };
+
+        const checkDisliked = async () => {
+            if (user) {
+                try {
+                    const disliked = await checkCommentDislikedByUser(comment.id, user.id);
+                    setDisliked(disliked);
+                } catch (error) {
+                    console.error("Error checking if comment is disliked by user:", error);
+                }
+            }
+        };
+
+        checkLiked();
+        checkDisliked();
+    }, [comment.likes, comment.dislikes, user]);
+
     const handleEdit = () => {
         onEdit(comment);
     };
@@ -55,13 +95,40 @@ const CommentItem: React.FC<CommentItemProps> = ({ comment, user, onEdit, onDele
         onDelete(comment);
     };
 
-    const handleLike = async () => {
-        // to be completed
-        console.log(comment.likes);
+    const handleLikeClicked = async () => {
+        if (user) {
+            try {
+                if (liked) {
+                    await unlikeComment(comment.id, user.id);
+                    setLiked(false);
+                    setNumLikes((prev) => prev - 1);
+                } else {
+                    await likeComment(comment.id, user.id);
+                    setLiked(true);
+                    setNumLikes((prev) => prev + 1);
+                }
+            } catch (error) {
+                console.error("Error liking/unliking comment:", error);
+            }
+        }
     };
 
-    const handleDislike = async () => {
-        // to be completed
+    const handleDislikeClicked = async () => {
+        if (user) {
+            try {
+                if (disliked) {
+                    await undislikeComment(comment.id, user.id);
+                    setDisliked(false);
+                    setNumDislikes((prev) => prev - 1);
+                } else {
+                    await dislikeComment(comment.id, user.id);
+                    setDisliked(true);
+                    setNumDislikes((prev) => prev + 1);
+                }
+            } catch (error) {
+                console.error("Error disliking/undisliking comment:", error);
+            }
+        }
     };
 
     return (
@@ -74,7 +141,7 @@ const CommentItem: React.FC<CommentItemProps> = ({ comment, user, onEdit, onDele
                         </Metadata>
                     </Box>
                     <Box>
-                        {user && user.id === comment.user_id ? (
+                        {user && user.id === comment.user_id && (
                             <>
                                 <IconButton onClick={handleEdit} size="small">
                                     <EditIcon fontSize="small" />
@@ -83,9 +150,6 @@ const CommentItem: React.FC<CommentItemProps> = ({ comment, user, onEdit, onDele
                                     <DeleteIcon fontSize="small" />
                                 </IconButton>
                             </>
-                        ) : (
-                            // Empty box to maintain spacing
-                            <></>
                         )}
                     </Box>
                 </Box>
@@ -94,17 +158,21 @@ const CommentItem: React.FC<CommentItemProps> = ({ comment, user, onEdit, onDele
                 </CommentBody>
                 <Box display="flex" justifyContent="space-between" alignItems="center">
                     <Box>
-                        <IconButton onClick={handleLike} size="small">
+                        <IconButton onClick={handleLikeClicked} size="small" color={liked ? "primary" : "default"}>
                             <ThumbUpIcon fontSize="small" />
                         </IconButton>
                         <Box display="inline" ml={0.5} mr={0.5}>
-                            {comment.likes}
+                            {numLikes}
                         </Box>
-                        <IconButton onClick={handleDislike} size="small">
+                        <IconButton
+                            onClick={handleDislikeClicked}
+                            size="small"
+                            color={disliked ? "primary" : "default"}
+                        >
                             <ThumbDownIcon fontSize="small" />
                         </IconButton>
                         <Box display="inline" ml={0.5}>
-                            {comment.dislikes}
+                            {numDislikes}
                         </Box>
                     </Box>
                 </Box>

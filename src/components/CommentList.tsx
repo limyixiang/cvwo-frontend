@@ -4,7 +4,7 @@ import User from "../types/User";
 import { fetchCommentsByPost } from "../backend";
 
 import React, { useEffect, useState } from "react";
-import { Box, Button, Menu, MenuItem } from "@mui/material";
+import { Box, Button, Menu, MenuItem, CircularProgress } from "@mui/material";
 import SortIcon from "@mui/icons-material/Sort";
 
 type CommentListProps = {
@@ -19,6 +19,7 @@ const CommentList: React.FC<CommentListProps> = ({ postID, refresh, user, onEdit
     const [comments, setComments] = useState<Comment[]>([]);
     const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         fetchCommentsByPost(postID)
@@ -29,6 +30,7 @@ const CommentList: React.FC<CommentListProps> = ({ postID, refresh, user, onEdit
                     setComments([]);
                 }
             })
+            .then(() => setLoading(false))
             .catch((error) => {
                 console.error("Error fetching comments:", error);
                 setComments([]);
@@ -55,6 +57,14 @@ const CommentList: React.FC<CommentListProps> = ({ postID, refresh, user, onEdit
             return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
         }
     });
+
+    if (loading) {
+        return (
+            <Box sx={{ width: "60vw", margin: "auto", textAlign: "center", padding: 2 }}>
+                <CircularProgress />
+            </Box>
+        );
+    }
 
     return (
         <Box>
