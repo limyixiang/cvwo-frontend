@@ -50,8 +50,6 @@ export const fetchCategories = async () => {
     }
 };
 
-// THREAD-RELATED
-
 // POST-RELATED
 export const createPost = async (
     user_id: number,
@@ -124,6 +122,66 @@ export const deletePost = async (post_id: number) => {
     try {
         await axios.delete(`${URL}/api/posts/${post_id}`);
         return;
+    } catch (error) {
+        console.error(error);
+        throw error;
+    }
+};
+
+export const likePost = async (post_id: number, user_id: number) => {
+    try {
+        const response = await axios.patch(`${URL}/api/posts/${post_id}/like`, { user_id });
+        return response.data.payload.data;
+    } catch (error) {
+        console.error(error);
+        throw error;
+    }
+};
+
+export const unlikePost = async (post_id: number, user_id: number) => {
+    try {
+        const response = await axios.patch(`${URL}/api/posts/${post_id}/unlike`, { user_id });
+        return response.data.payload.data;
+    } catch (error) {
+        console.error(error);
+        throw error;
+    }
+};
+
+export const dislikePost = async (post_id: number, user_id: number) => {
+    try {
+        const response = await axios.patch(`${URL}/api/posts/${post_id}/dislike`, { user_id });
+        return response.data.payload.data;
+    } catch (error) {
+        console.error(error);
+        throw error;
+    }
+};
+
+export const undislikePost = async (post_id: number, user_id: number) => {
+    try {
+        const response = await axios.patch(`${URL}/api/posts/${post_id}/undislike`, { user_id });
+        return response.data.payload.data;
+    } catch (error) {
+        console.error(error);
+        throw error;
+    }
+};
+
+export const checkPostLikedByUser = async (post_id: number, user_id: number) => {
+    try {
+        const response = await axios.get(`${URL}/api/posts/${post_id}/checklike/${user_id}`);
+        return response.data.payload.data;
+    } catch (error) {
+        console.error(error);
+        throw error;
+    }
+};
+
+export const checkPostDislikedByUser = async (post_id: number, user_id: number) => {
+    try {
+        const response = await axios.get(`${URL}/api/posts/${post_id}/checkdislike/${user_id}`);
+        return response.data.payload.data;
     } catch (error) {
         console.error(error);
         throw error;

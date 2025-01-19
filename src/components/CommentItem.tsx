@@ -65,7 +65,6 @@ const CommentItem: React.FC<CommentItemProps> = ({ comment, user, onEdit, onDele
             if (user) {
                 try {
                     const liked = await checkCommentLikedByUser(comment.id, user.id);
-                    console.log("liked", liked);
                     setLiked(liked);
                 } catch (error) {
                     console.error("Error checking if comment is liked by user:", error);

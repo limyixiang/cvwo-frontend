@@ -6,6 +6,12 @@ import {
     deleteComment,
     updatePost,
     deletePost,
+    likePost,
+    unlikePost,
+    dislikePost,
+    undislikePost,
+    checkPostLikedByUser,
+    checkPostDislikedByUser,
 } from "../backend";
 import CommentList from "../components/CommentList";
 import User from "../types/User";
@@ -48,6 +54,11 @@ const ThreadView: React.FC<ThreadViewProps> = ({ user }: ThreadViewProps) => {
     const [snackbarOpen, setSnackbarOpen] = useState(false);
     const [snackbarMessage, setSnackbarMessage] = useState("");
     const [snackbarSeverity, setSnackbarSeverity] = useState<"success" | "error" | "warning" | "info">("info");
+    const [liked, setLiked] = useState<boolean>(false);
+    const [disliked, setDisliked] = useState<boolean>(false);
+    const [numLikes, setNumLikes] = useState<number>(0);
+    const [numDislikes, setNumDislikes] = useState<number>(0);
+    const [loadingLike, setLoadingLike] = useState<boolean>(false);
 
     useEffect(() => {
         const getPost = async () => {
@@ -63,7 +74,31 @@ const ThreadView: React.FC<ThreadViewProps> = ({ user }: ThreadViewProps) => {
             }
         };
 
+        const checkLiked = async () => {
+            if (user && post) {
+                try {
+                    const liked = await checkPostLikedByUser(post.id, user.id);
+                    setLiked(liked);
+                } catch (error) {
+                    console.error("Error checking if post liked:", error);
+                }
+            }
+        };
+
+        const checkDisliked = async () => {
+            if (user && post) {
+                try {
+                    const disliked = await checkPostDislikedByUser(post.id, user.id);
+                    setDisliked(disliked);
+                } catch (error) {
+                    console.error("Error checking if post disliked:", error);
+                }
+            }
+        };
+
         getPost();
+        checkLiked();
+        checkDisliked();
     }, [postID]);
 
     const hideCommentBox = () => {
@@ -257,6 +292,58 @@ const ThreadView: React.FC<ThreadViewProps> = ({ user }: ThreadViewProps) => {
         setSnackbarOpen(false);
     };
 
+    const handleLikeClicked = async () => {
+        if (user && post && !loadingLike) {
+            setLoadingLike(true);
+            try {
+                if (disliked) {
+                    await undislikePost(post.id, user.id);
+                    setDisliked(false);
+                    setNumDislikes((prev) => prev - 1);
+                }
+                if (liked) {
+                    await unlikePost(post.id, user.id);
+                    setLiked(false);
+                    setNumLikes((prev) => prev - 1);
+                } else {
+                    await likePost(post.id, user.id);
+                    setLiked(true);
+                    setNumLikes((prev) => prev + 1);
+                }
+            } catch (error) {
+                console.error("Error liking/unliking post:", error);
+            } finally {
+                setLoadingLike(false);
+            }
+        }
+    };
+
+    const handleDislikeClicked = async () => {
+        if (user && post && !loadingLike) {
+            setLoadingLike(true);
+            try {
+                if (liked) {
+                    await unlikePost(post.id, user.id);
+                    setLiked(false);
+                    setNumLikes((prev) => prev - 1);
+                }
+                if (disliked) {
+                    await undislikePost(post.id, user.id);
+                    setDisliked(false);
+                    setNumDislikes((prev) => prev - 1);
+                } else {
+                    await dislikePost(post.id, user.id);
+                    setDisliked(true);
+                    setNumDislikes((prev) => prev + 1);
+                }
+            } catch (error) {
+                console.error("Error disliking/undisliking post:", error);
+            } finally {
+                setLoadingLike(false);
+            }
+        }
+    };
+
     if (loading) {
         return (
             <Box sx={{ width: "60vw", margin: "auto", textAlign: "center", padding: 2 }}>
@@ -277,6 +364,13 @@ const ThreadView: React.FC<ThreadViewProps> = ({ user }: ThreadViewProps) => {
                     handleMenuClose={handleMenuClose}
                     handleEditPost={handleEditPost}
                     handleDeletePost={handleDeletePost}
+                    handleLikeClicked={handleLikeClicked}
+                    handleDislikeClicked={handleDislikeClicked}
+                    liked={liked}
+                    disliked={disliked}
+                    numLikes={numLikes}
+                    numDislikes={numDislikes}
+                    loadingLike={loadingLike}
                 />
             )}
             <br />
