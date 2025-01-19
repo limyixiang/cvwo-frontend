@@ -100,6 +100,11 @@ const CommentItem: React.FC<CommentItemProps> = ({ comment, user, onEdit, onDele
         if (user && !loading) {
             setLoading(true);
             try {
+                if (disliked) {
+                    await undislikeComment(comment.id, user.id);
+                    setDisliked(false);
+                    setNumDislikes((prev) => prev - 1);
+                }
                 if (liked) {
                     await unlikeComment(comment.id, user.id);
                     setLiked(false);
@@ -121,6 +126,11 @@ const CommentItem: React.FC<CommentItemProps> = ({ comment, user, onEdit, onDele
         if (user && !loading) {
             setLoading(true);
             try {
+                if (liked) {
+                    await unlikeComment(comment.id, user.id);
+                    setLiked(false);
+                    setNumLikes((prev) => prev - 1);
+                }
                 if (disliked) {
                     await undislikeComment(comment.id, user.id);
                     setDisliked(false);
