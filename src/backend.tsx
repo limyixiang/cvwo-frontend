@@ -1,7 +1,7 @@
 import axios, { isAxiosError } from "axios";
 
-const URL = "http://localhost:8080";
-// const URL = "https://cvwo-backend-yixiang-f54bf3fe1878.herokuapp.com";
+// const URL = "http://localhost:8080";
+const URL = "https://cvwo-backend-yixiang-f54bf3fe1878.herokuapp.com";
 
 // USER-RELATED
 export const fetchUser = async (username: string) => {
