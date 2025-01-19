@@ -45,6 +45,7 @@ const CommentItem: React.FC<CommentItemProps> = ({ comment, user, onEdit, onDele
     const [disliked, setDisliked] = useState<boolean>(false);
     const [numLikes, setNumLikes] = useState<number>(comment.likes);
     const [numDislikes, setNumDislikes] = useState<number>(comment.dislikes);
+    const [loading, setLoading] = useState<boolean>(false);
 
     useEffect(() => {
         const getUser = async () => {
@@ -96,7 +97,8 @@ const CommentItem: React.FC<CommentItemProps> = ({ comment, user, onEdit, onDele
     };
 
     const handleLikeClicked = async () => {
-        if (user) {
+        if (user && !loading) {
+            setLoading(true);
             try {
                 if (liked) {
                     await unlikeComment(comment.id, user.id);
@@ -109,12 +111,15 @@ const CommentItem: React.FC<CommentItemProps> = ({ comment, user, onEdit, onDele
                 }
             } catch (error) {
                 console.error("Error liking/unliking comment:", error);
+            } finally {
+                setLoading(false);
             }
         }
     };
 
     const handleDislikeClicked = async () => {
-        if (user) {
+        if (user && !loading) {
+            setLoading(true);
             try {
                 if (disliked) {
                     await undislikeComment(comment.id, user.id);
@@ -127,6 +132,8 @@ const CommentItem: React.FC<CommentItemProps> = ({ comment, user, onEdit, onDele
                 }
             } catch (error) {
                 console.error("Error disliking/undisliking comment:", error);
+            } finally {
+                setLoading(false);
             }
         }
     };
@@ -158,7 +165,12 @@ const CommentItem: React.FC<CommentItemProps> = ({ comment, user, onEdit, onDele
                 </CommentBody>
                 <Box display="flex" justifyContent="space-between" alignItems="center">
                     <Box>
-                        <IconButton onClick={handleLikeClicked} size="small" color={liked ? "primary" : "default"}>
+                        <IconButton
+                            onClick={handleLikeClicked}
+                            size="small"
+                            color={liked ? "primary" : "default"}
+                            disabled={loading}
+                        >
                             <ThumbUpIcon fontSize="small" />
                         </IconButton>
                         <Box display="inline" ml={0.5} mr={0.5}>
@@ -168,6 +180,7 @@ const CommentItem: React.FC<CommentItemProps> = ({ comment, user, onEdit, onDele
                             onClick={handleDislikeClicked}
                             size="small"
                             color={disliked ? "primary" : "default"}
+                            disabled={loading}
                         >
                             <ThumbDownIcon fontSize="small" />
                         </IconButton>
