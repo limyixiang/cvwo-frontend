@@ -114,7 +114,10 @@ const ThreadList: React.FC<ThreadListProps> = ({ refresh, selectedCategory }: Th
                                     <Typography color="textSecondary">
                                         by {users[post.user_id]?.name || "Unknown"}
                                     </Typography>
-                                    <Box display="flex" justifyContent="flex-end" mt={2}>
+                                    <Box display="flex" justifyContent="space-between" mt={2}>
+                                        <Typography variant="body2" color="textSecondary">
+                                            {post.likes} upvotes | {post.dislikes} downvotes
+                                        </Typography>
                                         <Typography variant="body2" color="textSecondary">
                                             Last updated: {new Date(post.updated_at).toLocaleString()}
                                         </Typography>

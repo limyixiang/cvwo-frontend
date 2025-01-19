@@ -6,6 +6,8 @@ type Post = {
     content: string;
     created_at: Date;
     updated_at: Date;
+    likes: number;
+    dislikes: number;
 };
 
 export default Post;
