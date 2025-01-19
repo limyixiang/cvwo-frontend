@@ -58,15 +58,18 @@ const ThreadView: React.FC<ThreadViewProps> = ({ user }: ThreadViewProps) => {
     const [disliked, setDisliked] = useState<boolean>(false);
     const [numLikes, setNumLikes] = useState<number>(0);
     const [numDislikes, setNumDislikes] = useState<number>(0);
-    const [loadingLike, setLoadingLike] = useState<boolean>(false);
+    const [loadingLike, setLoadingLike] = useState<boolean>(true);
 
     useEffect(() => {
+        let fetchedPost: Post;
         const getPost = async () => {
             try {
-                const fetchedPost = await fetchPostByID(parseInt(postID || "0"));
+                fetchedPost = await fetchPostByID(parseInt(postID || "0"));
                 const postUser = await fetchUserByID(fetchedPost.user_id);
                 setPostUserName(postUser.name);
                 setPost(fetchedPost);
+                setNumLikes(fetchedPost.likes);
+                setNumDislikes(fetchedPost.dislikes);
                 setLoading(false);
             } catch (error) {
                 console.error("Error fetching post:", error);
@@ -74,10 +77,16 @@ const ThreadView: React.FC<ThreadViewProps> = ({ user }: ThreadViewProps) => {
             }
         };
 
+        getPost();
+    }, [postID]);
+
+    useEffect(() => {
+        setLoadingLike(true);
         const checkLiked = async () => {
             if (user && post) {
                 try {
                     const liked = await checkPostLikedByUser(post.id, user.id);
+                    console.log("liked", liked);
                     setLiked(liked);
                 } catch (error) {
                     console.error("Error checking if post liked:", error);
@@ -96,10 +105,12 @@ const ThreadView: React.FC<ThreadViewProps> = ({ user }: ThreadViewProps) => {
             }
         };
 
-        getPost();
-        checkLiked();
-        checkDisliked();
-    }, [postID]);
+        if (post) {
+            checkLiked();
+            checkDisliked();
+        }
+        setLoadingLike(false);
+    }, [user, post]);
 
     const hideCommentBox = () => {
         setIsAddComment(false);
